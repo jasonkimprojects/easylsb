@@ -56,15 +56,15 @@ class EasyLSB : public BitmapParser {
         // Constructor - makes accessor point to red channel of row 0, col 0.
         explicit ChannelAccessor(EasyLSB* easy);
         // Channel accessor, mutator, increment.
-        uint8_t get_channel();
+        uint8_t get_channel() const;
         void replace_channel(uint8_t new_value);
         void next_channel();
         // Accessor for getting number of wraps.
-        size_t get_wraparounds();
+        size_t get_wraparounds() const;
         // Returns the appropriate mask for each wrap.
-        uint8_t wrap_mask(size_t wraparounds);
+        uint8_t wrap_mask(size_t wraparounds) const;
         // Returns the appropriate bitmask for each wrap round.
-        uint8_t bitmask(size_t wraparounds);
+        uint8_t bitmask(size_t wraparounds) const;
     };
     // Constants for readability
     const size_t BITS_PER_BYTE = 8;
@@ -87,7 +87,7 @@ class EasyLSB : public BitmapParser {
     // For keeping track of which channels we are at.
     ChannelAccessor c;
     // Helper function for constructor.
-    void check_size();
+    void check_size() const;
 
  public:
     // Constructor for encode.
@@ -128,9 +128,9 @@ Steganography starts with 2 bytes (16 bits) for original
 message length in bytes, so original messsage can be up to
 2^16 - 1 chars = 65535 chars in length.
 */
-void EasyLSB::check_size() {
+void EasyLSB::check_size() const {
     if (msg.length() * BITS_PER_BYTE + NUM_LENGTH_BITS >
-        infoheader().width * infoheader().height *
+        read_infoheader().width * read_infoheader().height *
         BITS_PER_BYTE) {
         throw std::runtime_error(
             "Image is not large enough to hold message!\n");
@@ -243,7 +243,7 @@ void EasyLSB::decode() {
 Returns the appropriate bit mask for setting individual bits,
 depending on how many times the message has wrapped around the pixels.
 */
-inline uint8_t EasyLSB::ChannelAccessor::wrap_mask(size_t wraparounds) {
+inline uint8_t EasyLSB::ChannelAccessor::wrap_mask(size_t wraparounds) const {
     switch (wraparounds) {
     case 0:
         return 0b11111110;
@@ -271,7 +271,7 @@ Returns the appropriate bit mask for isolating individual bits
 from a channel, depending on how many wraps (rollovers) were
 used in the decoding process.
 */
-inline uint8_t EasyLSB::ChannelAccessor::bitmask(size_t wraparounds) {
+inline uint8_t EasyLSB::ChannelAccessor::bitmask(size_t wraparounds) const {
     switch (wraparounds) {
     case 0:
         return 0b00000001;
@@ -300,7 +300,7 @@ EasyLSB::ChannelAccessor::ChannelAccessor(EasyLSB* easy)
     ptr(&(easy->pixels()[row][col].red)) {}
 
 // Accessor for getting the channel value.
-inline uint8_t EasyLSB::ChannelAccessor::get_channel() {
+inline uint8_t EasyLSB::ChannelAccessor::get_channel() const {
     return *ptr;
 }
 
@@ -310,7 +310,7 @@ inline void EasyLSB::ChannelAccessor::replace_channel(uint8_t new_value) {
 }
 
 // Accessor for number of wraps that msg has done around pixels.
-inline size_t EasyLSB::ChannelAccessor::get_wraparounds() {
+inline size_t EasyLSB::ChannelAccessor::get_wraparounds() const {
     return wraparounds;
 }
 
