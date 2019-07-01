@@ -16,20 +16,27 @@ June 30, 2019
 
 ## Usage
 
-#### 1. For encoding a message inside an image:
+#### 1. Compiling the source code:
+I have included a makefile in this repository. Prerequisites for compilation are the `g++` compiler, the `make` utility, tools that support C++17, **and that the BitmapParser library (bitmapparser.h) must be in the same directory as the makefile and EasyLSB.cpp.**
+
+`make` / `make all` compiles the standard executable, `EasyLSB`. `make debug` compiles a debug executable `EasyLSB_debug` with compiler optimizations turned off for easier debugging. `make clean` removes the executables if they are present.
+
+If you do not have the `make` utility, you can compile the standard executable manually through the following command: `g++ -std=c++17 -Wall -Werror -pedantic -o3 EasyLSB.cpp -o EasyLSB`
+
+#### 2. For encoding a message inside an image:
 `./EasyLSB <-e or --encode> <message> <bitmap image filename> <output filename>`  
 
 `<output filename>` will be created in the same directory the program was run.
 Please note that if `<bitmap image filename>` and `<output filename>` are the same,
 then the input image will be **overwritten!**
 
-#### 2. For decoding a message from a LSB encoded image:
+#### 3. For decoding a message from a LSB encoded image:
 `./EasyLSB <-d or --decode> <bitmap image filename>`  
 
 If `<bitmap image filename>` is an image containing steganogrpahy by this program, 
 	then the message will be printed to `stdout`.
 
-#### 3. To display the help message:
+#### 4. To display the help message:
 `./EasyLSB <-h or --help>`
 
 ## Examples
@@ -61,7 +68,7 @@ If the message cannot fit in the least significant bits of all the channels, it 
 
 ## Exceptions
 
-EasyLSB can throw two `std::runtime_error` exceptions. They can be distinguished by the string returned when `what()` is called.
+*EasyLSB* can throw two `std::runtime_error` exceptions. They can be distinguished by the string returned when `what()` is called.
 
 * `what()` will return "Image is not large enough to hold message!" if the image cannot hold the message bits plus the 16 length bits.
 
